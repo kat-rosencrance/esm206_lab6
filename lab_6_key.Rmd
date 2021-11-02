@@ -56,7 +56,7 @@ This p-value means that if our samples are drawn from populations with the same 
 
 ## Mann- Whitney U rank based test
 
-Weuse the `wilcox.test()` functionto perform a two-sample rank-based test
+We use the `wilcox.test()` function to perform a two-sample rank-based test
 
 ```{r}
 mwu <- wilcox.test(gp_1, gp_2)
@@ -65,3 +65,58 @@ mwu <- wilcox.test(gp_1, gp_2)
 this p value means that if our samples are drawn from populations with the same median the probability of finding sample median at least as difference as mine by random chance is `r round(wilcox.test$p.value,2)`
 
 no significant difference in medians (Mann-Whitney U; U = `r mwu$statistic`, p = `r round( mwu$p.value,2)`)
+
+## Simple linear regression
+
+two *continuous quantitative* variables that you are trying to understand the relationship between and you think that a linear relationship makes sense
+
+
+Use penguins data from palmer penguins exploring flipper length vs body mass
+
+```{r}
+# Make an exploratory scatter plot of flipper length vs body mass 
+
+ggplot(data = penguins, aes(x = flipper_length_mm, y = body_mass_g))+
+  geom_point() +
+  geom_smooth(method = "lm")
+```
+### FInd the model estimates for coefficients
+
+Use the `lm()` function for linear model
+
+```{r}
+penguin_lm <- lm(body_mass_g ~ flipper_length_mm, data = penguins)
+```
+
+model coefficients: `r penguin_lm$coefficients`
+fliiper length coefficient: `r penguin_lm$coefficients[2]`
+
+### use broom::tody to get a tidy output from lm()
+
+```{r}
+penguin_lm_tidy <- tidy(penguin_lm)
+
+penguin_lm_tidy
+```
+
+
+### use broom::glance to ge output of model fit and staistical significance
+
+```{r}
+penguin_lm_glance <- glance(penguin_lm)
+
+penguin_lm_glance
+```
+
+
+### USe equatiomatic::extract_eq to return the model in LateX
+
+```{r}
+extract_eq(model = penguin_lm, use_coefs = TRUE)
+```
+### use plot() to automatically produce diagnostic plots
+
+```{r}
+plot(penguin_lm)
+```
+
