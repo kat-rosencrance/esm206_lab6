@@ -1,0 +1,67 @@
+---
+title: "Lab 6"
+author: "Katherine Rosencrance"
+date: "11/2/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(tidyverse)
+library(palmerpenguins)
+library(broom)
+library(equatiomatic)
+
+```
+
+## Rank based test example
+
+Mann-Whitney U (non-parametric alternative to an unpaired 2-sample t test)
+
+H0: equal ranks or medians
+HA: Ranks are not equal or medians are not equal
+
+### Create samples
+
+`set.seed()` to create pseudorandom but reproducible samples
+
+```{r}
+set.seed(1414)
+gp_1 <- sample.int(20, size = 15, replace = TRUE)
+
+gp_1
+
+set.seed(1424)
+gp_2 <- sample.int(30, size = 15, replace = TRUE)
+
+gp_2
+```
+Take a quick look at distributions using `hist()`
+
+```{r}
+hist(gp_1)
+hist(gp_2)
+```
+
+Try a t test so we can compare results
+
+```{r}
+ttest <- t.test(gp_1, gp_2)
+
+# If these data were paired, I can just add the argument paired = TRUE within t test
+```
+
+This p-value means that if our samples are drawn from populations with the same mean (ie if the null hypothesis is true) there is `r round(ttest$p.value,2)` probability of finding sample means *at least as different* as mine by random chance
+
+## Mann- Whitney U rank based test
+
+Weuse the `wilcox.test()` functionto perform a two-sample rank-based test
+
+```{r}
+mwu <- wilcox.test(gp_1, gp_2)
+```
+
+this p value means that if our samples are drawn from populations with the same median the probability of finding sample median at least as difference as mine by random chance is `r round(wilcox.test$p.value,2)`
+
+no significant difference in medians (Mann-Whitney U; U = `r mwu$statistic`, p = `r round( mwu$p.value,2)`)
